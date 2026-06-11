@@ -15,6 +15,7 @@ Query OK, 1 row affected (0.013 sec)
 MariaDB [(none)]> use MovieCo;
 Database changed
 
+###Question 1
 MariaDB [MovieCo]> --1
 
 MariaDB [MovieCo]> create table MEMBERSHIP(Mem_Num INT PRIMARY KEY,Mem_Fname VARCHAR(20),Mem_Lname VARCHAR(20),Mem_Street VARCHAR(50),Mem_City VARCHAR(50),Mem_State VARCHAR(3), Mem_Zip INT,Mem_Balance DECIMAL(8,2));
