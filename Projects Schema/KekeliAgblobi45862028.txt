@@ -1,0 +1,217 @@
+MariaDB [(none)]> CREATE DATABASE Kekeli_Corporation;
+Query OK, 1 row affected (0.006 sec)
+
+MariaDB [(none)]> USE Kekeli_Corporation;
+Database changed
+
+MariaDB [Kekeli_Corporation]> CREATE TABLE Employee(
+    ->     empNo VARCHAR(10) PRIMARY KEY,
+    ->     fName VARCHAR(30),
+    ->     lName VARCHAR(50),
+    ->     address VARCHAR(100),
+    ->     DOB DATE,
+    ->     sex VARCHAR(1) CHECK(sex IN('M','F')),
+    ->     position VARCHAR(30) CHECK(position IN('Manager','Team Leader','Analyst','Software Developer')),
+    ->     deptNo VARCHAR(10)
+    -> );
+Query OK, 0 rows affected (0.023 sec)
+
+MariaDB [Kekeli_Corporation]> CREATE TABLE Department(
+    ->     deptNo VARCHAR(10) PRIMARY KEY,
+    ->     deptName VARCHAR(70) NOT NULL,
+    ->     mgrEmpNo VARCHAR(10),
+    ->     FOREIGN KEY (mgrEmpNo) REFERENCES Employee(empNo)
+    -> );
+Query OK, 0 rows affected (0.021 sec)
+
+MariaDB [Kekeli_Corporation]> ALTER TABLE Employee
+    -> ADD CONSTRAINT fk
+    -> FOREIGN KEY (deptNo) REFERENCES Department(deptNo);
+Query OK, 0 rows affected (0.074 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> CREATE TABLE Project(
+    ->     projNo VARCHAR(10) PRIMARY KEY,
+    ->     projName VARCHAR(70),
+    ->     deptNo VARCHAR(10),
+    ->     FOREIGN KEY (deptNo) REFERENCES Department(deptNo)
+    -> );
+Query OK, 0 rows affected (0.022 sec)
+
+
+MariaDB [Kekeli_Corporation]> CREATE TABLE WorksOn(
+    ->     empNo VARCHAR(10),
+    ->     projNo VARCHAR(10),
+    ->     dateWorked DATE,
+    ->     hoursWorked INTEGER CHECK(hoursWorked BETWEEN 0 AND 40),
+    ->     PRIMARY KEY (empNo, projNo, dateWorked),
+    ->     FOREIGN KEY (empNo) REFERENCES Employee(empNo),
+    ->     FOREIGN KEY (projNo) REFERENCES Project(projNo)
+    -> );
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [Kekeli_Corporation]> INSERT INTO Department (deptNo, deptName) VALUES
+    -> ('D1', 'Tech Innovation Hub'),
+    -> ('D2', 'Agri-Tech Solutions'),
+    -> ('D3', 'FinTech Infrastructure'),
+    -> ('D4', 'GIS & Remote Sensing Division'),
+    -> ('D5', 'Human Capital & Operations');
+Query OK, 5 rows affected (0.011 sec)
+
+MariaDB [Kekeli_Corporation]> INSERT INTO Employee (empNo, fName, lName, address, DOB, sex, position, deptNo) VALUES
+    -> ('E1', 'Kofi', 'Mensah', 'East Legon, Accra', '1985-05-12', 'M', 'Manager', 'D1'),
+    -> ('E2', 'Ama', 'Serwaa', 'Dansoman, Accra', '1990-08-22', 'F', 'Manager', 'D2'),
+    -> ('E3', 'Kwame', 'Osei', 'Santasi, Kumasi', '1988-11-03', 'M', 'Manager', 'D3'),
+    -> ('E4', 'Abena', 'Agyapong', 'Ayigya, Kumasi', '1992-02-14', 'F', 'Manager', 'D4'),
+    -> ('E5', 'Yaw', 'Boakye', 'Tarkwa, Western', '1987-09-30', 'M', 'Manager', 'D5'),
+    -> ('E6', 'Esi', 'Appiah', 'Madina, Accra', '1995-04-10', 'F', 'Software Developer', 'D1'),
+    -> ('E7', 'Seth', 'Quartey', 'Osu, Accra', '1993-06-25', 'M', 'Analyst', 'D2'),
+    -> ('E8', 'Adwoa', 'Darko', 'Taifa, Accra', '1996-12-01', 'F', 'Software Developer', 'D3'),
+    -> ('E9', 'Kojo', 'Baah', 'Kwabenya, Accra', '1994-01-20', 'M', 'Team Leader', 'D4'),
+    -> ('E10', 'Efua', 'Tetteh', 'Spintex, Accra', '1997-07-15', 'F', 'Analyst', 'D5');
+Query OK, 10 rows affected (0.008 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> UPDATE Department SET mgrEmpNo = 'E1' WHERE deptNo = 'D1';
+Query OK, 1 row affected (0.006 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> UPDATE Department SET mgrEmpNo = 'E2' WHERE deptNo = 'D2';
+Query OK, 1 row affected (0.005 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> UPDATE Department SET mgrEmpNo = 'E3' WHERE deptNo = 'D3';
+Query OK, 1 row affected (0.004 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> UPDATE Department SET mgrEmpNo = 'E4' WHERE deptNo = 'D4';
+Query OK, 1 row affected (0.004 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> UPDATE Department SET mgrEmpNo = 'E5' WHERE deptNo = 'D5';
+Query OK, 1 row affected (0.005 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> INSERT INTO Project (projNo, projName, deptNo) VALUES
+    -> ('GDS', 'Galamsey Detection System', 'D4'),
+    -> ('MMAR', 'Mobile Money API Refactor', 'D3'),
+    -> ('CYP', 'Cocoa Yield Predictor', 'D2'),
+    -> ('ACPU', 'Ashesi Campus Portal UI', 'D1'),
+    -> ('SPA', 'Staff Payroll Automation', 'D5');
+Query OK, 5 rows affected (0.016 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> INSERT INTO WorksOn (empNo, projNo, dateWorked, hoursWorked) VALUES
+    -> ('E6', 'ACPU', '2026-06-20', 8),
+    -> ('E9', 'GDS', '2026-06-21', 6),
+    -> ('E8', 'MMAR', '2026-06-21', 7),
+    -> ('E7', 'CYP', '2026-06-22', 5),
+    -> ('E10', 'SPA', '2026-06-22', 4),
+    -> ('E1', 'ACPU', '2026-06-23', 2),
+    -> ('E2', 'CYP', '2026-06-23', 3),
+    -> ('E3', 'MMAR', '2026-06-24', 4),
+    -> ('E4', 'GDS', '2026-06-24', 5),
+    -> ('E5', 'SPA', '2026-06-24', 2);
+Query OK, 10 rows affected (0.006 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+MariaDB [Kekeli_Corporation]> CREATE VIEW FemaleManagedProjects AS
+    -> SELECT p.projNo,p.projName
+    -> FROM Project p, Employee e
+    -> WHERE p.deptNo=e.deptNo AND (e.sex='F' AND e.position='Manager')
+    -> ORDER BY p.projNo ASC;
+Query OK, 0 rows affected (0.015 sec)
+
+MariaDB [Kekeli_Corporation]> select * from FemaleManagedProjects;
++--------+---------------------------+
+| projNo | projName                  |
++--------+---------------------------+
+| CYP    | Cocoa Yield Predictor     |
+| GDS    | Galamsey Detection System |
++--------+---------------------------+
+2 rows in set (0.005 sec)
+
+
+MariaDB [Kekeli_Corporation]> CREATE VIEW EmployeeSummary AS
+    -> SELECT e.empNo,e.fName,e.lName,p.projName,w.hoursWorked
+    -> FROM Employee e, Project p, WorksOn w
+    -> WHERE e.empNo=w.empNo AND p.projNo=w.projNo;
+Query OK, 0 rows affected (0.016 sec)
+
+MariaDB [Kekeli_Corporation]> select * from EmployeeSummary;
++-------+-------+----------+---------------------------+-------------+
+| empNo | fName | lName    | projName                  | hoursWorked |
++-------+-------+----------+---------------------------+-------------+
+| E1    | Kofi  | Mensah   | Ashesi Campus Portal UI   |           2 |
+| E6    | Esi   | Appiah   | Ashesi Campus Portal UI   |           8 |
+| E2    | Ama   | Serwaa   | Cocoa Yield Predictor     |           3 |
+| E7    | Seth  | Quartey  | Cocoa Yield Predictor     |           5 |
+| E4    | Abena | Agyapong | Galamsey Detection System |           5 |
+| E9    | Kojo  | Baah     | Galamsey Detection System |           6 |
+| E3    | Kwame | Osei     | Mobile Money API Refactor |           4 |
+| E8    | Adwoa | Darko    | Mobile Money API Refactor |           7 |
+| E10   | Efua  | Tetteh   | Staff Payroll Automation  |           4 |
+| E5    | Yaw   | Boakye   | Staff Payroll Automation  |           2 |
++-------+-------+----------+---------------------------+-------------+
+10 rows in set (0.004 sec)
+
+MariaDB [Kekeli_Corporation]> CREATE VIEW EmpProject (empNo, projNo, totalHours)
+    -> AS SELECT w.empNo, w.projNo, SUM(hoursWorked)
+    -> FROM Employee e, Project p, WorksOn w
+    -> WHERE e.empNo = w.empNo AND p.projNo = w.projNo
+    -> GROUP BY w.empNo, w.projNo;
+Query OK, 0 rows affected (0.014 sec)
+
+MariaDB [Kekeli_Corporation]> SELECT *
+    -> FROM EmpProject;
++-------+--------+------------+
+| empNo | projNo | totalHours |
++-------+--------+------------+
+| E1    | ACPU   |          2 |
+| E10   | SPA    |          4 |
+| E2    | CYP    |          3 |
+| E3    | MMAR   |          4 |
+| E4    | GDS    |          5 |
+| E5    | SPA    |          2 |
+| E6    | ACPU   |          8 |
+| E7    | CYP    |          5 |
+| E8    | MMAR   |          7 |
+| E9    | GDS    |          6 |
++-------+--------+------------+
+10 rows in set (0.006 sec)
+
+MariaDB [Kekeli_Corporation]> SELECT projNo
+    -> FROM EmpProject
+    -> WHERE projNo='SCCS';
+Empty set (0.007 sec)
+
+MariaDB [Kekeli_Corporation]> SELECT COUNT(proJNo)
+    -> FROM EmpProject
+    -> WHERE empNo='E1';
++---------------+
+| COUNT(proJNo) |
++---------------+
+|             1 |
++---------------+
+1 row in set (0.007 sec)
+
+MariaDB [Kekeli_Corporation]> SELECT empNo, totalHours
+    -> FROM EmpProject
+    -> GROUP BY empNo;
++-------+------------+
+| empNo | totalHours |
++-------+------------+
+| E1    |          2 |
+| E10   |          4 |
+| E2    |          3 |
+| E3    |          4 |
+| E4    |          5 |
+| E5    |          2 |
+| E6    |          8 |
+| E7    |          5 |
+| E8    |          7 |
+| E9    |          6 |
++-------+------------+
+10 rows in set (0.004 sec)
+
+
